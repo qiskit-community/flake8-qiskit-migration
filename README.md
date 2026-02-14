@@ -1,8 +1,9 @@
 # flake8-qiskit-migration
 
-Flake8 plugin to detect imports deprecated in Qiskit 1.0. For a full migration
-guide, see [Qiskit 1.0 feature
-changes](https://docs.quantum.ibm.com/api/migration-guides/qiskit-1.0-features).
+Flake8 plugin to detect deprecated/removed imports in Qiskit 1.0 and 2.0.
+
+- **QKT100**: Imports deprecated in Qiskit 1.0 ([migration guide](https://docs.quantum.ibm.com/api/migration-guides/qiskit-1.0-features))
+- **QKT200**: Imports removed in Qiskit 2.0 ([migration guide](https://docs.quantum.ibm.com/migration-guides/qiskit-2.0))
 
 > [!WARNING]
 > This tool only detects deprecated import paths, it does not detect use of
@@ -39,12 +40,18 @@ python -m venv .flake8-qiskit-migration-venv
 source .flake8-qiskit-migration-venv/bin/activate
 pip install flake8-qiskit-migration
 
-# Run plugin on Python code
-flake8 --select QKT100 <path-to-source>  # e.g. `src/`
+# Run all migration checks (QKT100 + QKT200)
+flake8 --select QKT <path-to-source>  # e.g. `src/`
+
+# Run only Qiskit 1.0 checks
+flake8 --select QKT100 <path-to-source>
+
+# Run only Qiskit 2.0 checks
+flake8 --select QKT200 <path-to-source>
 
 # Run plugin on notebooks
 pip install nbqa
-nbqa flake8 ./**/*.ipynb --select QKT100
+nbqa flake8 ./**/*.ipynb --select QKT
 
 # Deactivate and delete environment
 deactivate
@@ -53,8 +60,8 @@ rm -r .flake8-qiskit-migration-venv
 
 ## With existing flake8
 
-If you already have `flake8` installed and want run this plugin that way, 
-To run only the deprecation detection plugin (`QKT100`), use the `--select`
+If you already have `flake8` installed and want run this plugin that way,
+To run only the deprecation detection plugin, use the `--select`
 argument. You'll probably want to uninstall it when you're done.
 
 ```sh
@@ -64,8 +71,14 @@ pip install flake8-qiskit-migration
 # Run all flake8 checks (including this plugin)
 flake8 <path-to-source>
 
-# Run only this plugin
+# Run only this plugin (both QKT100 and QKT200)
+flake8 --select QKT <path-to-source>
+
+# Run only Qiskit 1.0 checks
 flake8 --select QKT100 <path-to-source>
+
+# Run only Qiskit 2.0 checks
+flake8 --select QKT200 <path-to-source>
 
 # Uninstall plugin
 pip uninstall flake8-qiskit-migration

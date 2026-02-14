@@ -114,7 +114,8 @@ def test_providers():
     from qiskit.providers.fake_provider import FakeBackend
     """
     assert _results(code) == {
-        "2:0 QKT100: qiskit.providers.fake_provider.FakeCairo has moved; install separate `qiskit-ibm-runtime` package and replace `qiskit.providers.fake_provider` with `qiskit_ibm_runtime.fake_provider`"
+        "2:0 QKT100: qiskit.providers.fake_provider.FakeCairo has moved; install separate `qiskit-ibm-runtime` package and replace `qiskit.providers.fake_provider` with `qiskit_ibm_runtime.fake_provider`",
+        "4:0 QKT200: qiskit.providers.fake_provider.FakeBackend has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
     }
 
 def test_utils():
@@ -126,3 +127,210 @@ def test_utils():
         "3:0 QKT100: qiskit.utils.entangler_map has been removed with no replacement",
         "3:0 QKT100: qiskit.utils.QuantumInstance has been removed; see https://docs.quantum.ibm.com/api/migration-guides/qiskit-quantum-instance"
     }
+
+
+# ---- QKT200 tests (Qiskit 2.0 removals) ----
+
+def test_pulse_removal():
+    code = """
+    import qiskit.pulse
+    from qiskit.pulse import ScheduleBlock
+    from qiskit.pulse.library import Gaussian
+    """
+    results = _results(code)
+    assert all("QKT200" in r for r in results)
+    assert len(results) == 3
+
+
+def test_qobj_removal():
+    code = """
+    from qiskit.qobj import QasmQobj
+    import qiskit.qobj
+    """
+    results = _results(code)
+    assert all("QKT200" in r for r in results)
+    assert len(results) == 2
+
+
+def test_classicalfunction_removal():
+    code = """
+    from qiskit.circuit.classicalfunction import ClassicalFunction
+    from qiskit.circuit.classicalfunction import BooleanExpression
+    """
+    results = _results(code)
+    assert all("QKT200" in r for r in results)
+    assert len(results) == 2
+
+
+def test_backendv1_removal():
+    code = """
+    from qiskit.providers import BackendV1
+    from qiskit.providers import BackendV2Converter
+    """
+    results = _results(code)
+    assert all("QKT200" in r for r in results)
+    assert len(results) == 2
+
+
+def test_provider_models_removal():
+    code = """
+    from qiskit.providers.models import BackendConfiguration
+    from qiskit.providers.models import BackendProperties
+    """
+    results = _results(code)
+    assert all("QKT200" in r for r in results)
+    assert len(results) == 2
+
+
+def test_primitive_v1_removal():
+    code = """
+    from qiskit.primitives import Estimator
+    from qiskit.primitives import Sampler
+    from qiskit.primitives import BackendEstimator
+    from qiskit.primitives import BackendSampler
+    from qiskit.primitives import StatevectorEstimator
+    from qiskit.primitives import StatevectorSampler
+    """
+    results = _results(code)
+    # StatevectorEstimator and StatevectorSampler are exceptions (valid V2 classes)
+    qkt200_results = {r for r in results if "QKT200" in r}
+    assert len(qkt200_results) == 4
+
+
+def test_transpiler_passes_v2():
+    code = """
+    from qiskit.transpiler.passes import ASAPSchedule
+    from qiskit.transpiler.passes import CXCancellation
+    from qiskit.transpiler.passes import StochasticSwap
+    from qiskit.transpiler.passes import PulseGates
+    """
+    results = _results(code)
+    qkt200_results = {r for r in results if "QKT200" in r}
+    assert len(qkt200_results) == 4
+
+
+def test_assembler_removal():
+    code = """
+    from qiskit.assembler import assemble_circuits
+    from qiskit.compiler import assemble
+    """
+    results = _results(code)
+    qkt200_results = {r for r in results if "QKT200" in r}
+    assert len(qkt200_results) == 2
+
+
+def test_scheduler_removal():
+    code = """
+    from qiskit.scheduler import schedule_circuit
+    """
+    results = _results(code)
+    assert any("QKT200" in r for r in results)
+
+
+def test_result_mitigation_removal():
+    code = """
+    from qiskit.result.mitigation import LocalReadoutMitigator
+    """
+    results = _results(code)
+    assert any("QKT200" in r for r in results)
+
+
+def test_visualization_v2():
+    code = """
+    from qiskit.visualization import pulse_drawer
+    from qiskit.visualization import visualize_transition
+    """
+    results = _results(code)
+    qkt200_results = {r for r in results if "QKT200" in r}
+    assert len(qkt200_results) == 2
+
+
+def test_fake_backend_v1_removal():
+    code = """
+    from qiskit.providers.fake_provider import FakeBackend
+    from qiskit.providers.fake_provider import Fake1Q
+    from qiskit.providers.fake_provider import GenericBackendV2
+    """
+    results = _results(code)
+    # FakeBackend and Fake1Q should trigger QKT200
+    # GenericBackendV2 is an exception (still valid)
+    qkt200_results = {r for r in results if "QKT200" in r}
+    assert len(qkt200_results) == 2
+
+
+def test_both_codes_pulse():
+    """qiskit.pulse paths that were deprecated in 1.0 AND removed in 2.0
+    should produce both QKT100 and QKT200 messages."""
+    code = """
+    from qiskit.pulse.library.parametric_pulses import Gaussian
+    """
+    results = _results(code)
+    assert any("QKT100" in r for r in results)
+    assert any("QKT200" in r for r in results)
+
+
+def test_v2_only_no_v1():
+    """Paths removed in 2.0 but NOT deprecated in 1.0 should only produce QKT200."""
+    code = """
+    from qiskit.providers import BackendV1
+    """
+    results = _results(code)
+    assert any("QKT200" in r for r in results)
+    assert not any("QKT100" in r for r in results)
+
+
+def test_v2_exceptions():
+    """V2 exceptions should not trigger QKT200."""
+    code = """
+    from qiskit.primitives import StatevectorEstimator
+    from qiskit.primitives import BaseEstimatorV2
+    from qiskit.providers.fake_provider import GenericBackendV2
+    """
+    results = _results(code)
+    qkt200_results = {r for r in results if "QKT200" in r}
+    assert len(qkt200_results) == 0
+
+
+def test_compiler_sequence_schedule_removal():
+    code = """
+    from qiskit.compiler import sequence
+    from qiskit.compiler import schedule
+    """
+    results = _results(code)
+    qkt200_results = {r for r in results if "QKT200" in r}
+    assert len(qkt200_results) == 2
+    assert all("Pulse removal" in r for r in qkt200_results)
+
+
+def test_rzx_templates_removal():
+    code = """
+    from qiskit.transpiler.passes import rzx_templates
+    """
+    results = _results(code)
+    assert any("QKT200" in r and "Pulse removal" in r for r in results)
+
+
+def test_no_false_positives():
+    """Valid Qiskit 2.0 imports should not trigger any warnings."""
+    code = """
+    from qiskit.circuit import QuantumCircuit
+    from qiskit.transpiler import generate_preset_pass_manager
+    from qiskit.transpiler.passes import SabreSwap
+    from qiskit.primitives import StatevectorEstimator
+    from qiskit.providers.fake_provider import GenericBackendV2
+    import qiskit.qasm2
+    import numpy
+    """
+    assert _results(code) == set()
+
+
+def test_dual_message_pulse_specific():
+    """A QKT100-specific pulse path also triggers QKT200 via the catch-all."""
+    code = """
+    from qiskit.pulse.builder import cx
+    """
+    results = _results(code)
+    qkt100 = {r for r in results if "QKT100" in r}
+    qkt200 = {r for r in results if "QKT200" in r}
+    assert len(qkt100) == 1
+    assert len(qkt200) == 1

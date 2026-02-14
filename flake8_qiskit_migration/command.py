@@ -6,4 +6,4 @@ def cli():
     # can't use `subprocess.run` as `pipx run ...` doesn't make `flake8`
     # available on PATH. I think this workaround is probably OK as
     # `flake8_main` hasn't changed in ~3yrs.
-    flake8_main(["--select", "QKT100"] + sys.argv[1:])
+    flake8_main(["--select", "QKT"] + sys.argv[1:])

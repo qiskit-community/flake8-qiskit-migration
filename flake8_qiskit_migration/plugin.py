@@ -5,28 +5,49 @@ from dataclasses import dataclass
 import importlib.metadata
 
 from .deprecated_paths import DEPRECATED_PATHS, EXCEPTIONS
+from .deprecated_paths_v2 import DEPRECATED_PATHS_V2, EXCEPTIONS_V2
+
+RULE_SETS = [
+    ("QKT100", DEPRECATED_PATHS, EXCEPTIONS),
+    ("QKT200", DEPRECATED_PATHS_V2, EXCEPTIONS_V2),
+]
 
 
-def deprecation_message(path: str, original_import_path: str | None = None) -> str | None:
+def _check_path(path: str, original_import_path: str, prefix: str, paths_dict: dict, exceptions: list) -> str | None:
     """
-    Build deprecation message from `DEPRECATED_PATHS` dict.
+    Recursively check if a path matches a deprecated path in the given dict.
+
+    Returns a formatted message string if deprecated, None otherwise.
+    """
+    if path in exceptions:
+        return None
+    if path not in paths_dict:
+        parent = ".".join(path.split(".")[:-1])
+        if "." not in parent:
+            return None
+        return _check_path(parent, original_import_path, prefix, paths_dict, exceptions)
+    return f"{prefix}: " + paths_dict[path].format(original_import_path)
+
+
+def deprecation_messages(path: str, original_import_path: str | None = None) -> list[str]:
+    """
+    Build deprecation messages from all rule sets.
 
     Args:
-        path (str): Python import path of the form `qiskit.extensions.thing`
+        path: Python import path of the form `qiskit.extensions.thing`
 
     Returns:
-        str: Deprecation message if path is deprecated
-        None: If no deprecations detected
+        List of deprecation message strings (may be empty)
     """
     original_import_path = original_import_path or path
     if "." not in path:
-        return None
-    if path in EXCEPTIONS:
-        return None
-    if path not in DEPRECATED_PATHS:
-        parent = ".".join(path.split(".")[:-1])
-        return deprecation_message(parent, original_import_path)
-    return f"QKT100: " + DEPRECATED_PATHS[path].format(original_import_path)
+        return []
+    messages = []
+    for prefix, paths_dict, exceptions in RULE_SETS:
+        msg = _check_path(path, original_import_path, prefix, paths_dict, exceptions)
+        if msg is not None:
+            messages.append(msg)
+    return messages
 
 
 class Visitor(ast.NodeVisitor):
@@ -60,13 +81,12 @@ class Visitor(ast.NodeVisitor):
     def report_if_deprecated(self, path: str, node) -> bool:
         """
         Adds path to problems if deprecated, ignores otherwise
-        Returns True if problem was reported
+        Returns True if any problem was reported
         """
-        msg = deprecation_message(path)
-        if msg is not None:
+        msgs = deprecation_messages(path)
+        for msg in msgs:
             self.problems.append(Problem(node, msg))
-            return True
-        return False
+        return len(msgs) > 0
 
     def visit_Import(self, node: ast.Import) -> None:
         for alias in node.names:

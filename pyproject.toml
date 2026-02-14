@@ -1,11 +1,11 @@
 [project]
 name = "flake8-qiskit-migration"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [ "flake8", ]
 authors = [
   { name="Frank Harkins", email="frankharkins@hotmail.co.uk" },
 ]
-description = "Quickly detect imports removed in the Qiskit 1.0 release"
+description = "Quickly detect deprecated/removed imports in Qiskit 1.0 and 2.0"
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -20,6 +20,7 @@ Issues = "https://github.com/frankharkins/flake8-qiskit-migration/issues"
 
 [project.entry-points."flake8.extension"]
 QKT100 = "flake8_qiskit_migration.plugin:Plugin"
+QKT200 = "flake8_qiskit_migration.plugin:Plugin"
 
 [project.scripts]
 flake8-qiskit-migration = "flake8_qiskit_migration.command:cli"
