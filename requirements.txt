@@ -1,3 +1,3 @@
-flake8
-pytest
-astpretty
+flake8==7.3.0
+pytest==9.0.2
+astpretty==3.0.0
