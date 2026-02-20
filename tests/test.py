@@ -115,7 +115,8 @@ def test_providers():
     """
     assert _results(code) == {
         "2:0 QKT100: qiskit.providers.fake_provider.FakeCairo has moved; install separate `qiskit-ibm-runtime` package and replace `qiskit.providers.fake_provider` with `qiskit_ibm_runtime.fake_provider`",
-        "4:0 QKT200: qiskit.providers.fake_provider.FakeBackend has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
+        "2:0 QKT200: qiskit.providers.fake_provider.FakeCairo has been removed in Qiskit 2.0; use `GenericBackendV2` or `qiskit_ibm_runtime.fake_provider`",
+        "4:0 QKT200: qiskit.providers.fake_provider.FakeBackend has been removed in Qiskit 2.0; use `GenericBackendV2` or `qiskit_ibm_runtime.fake_provider`",
     }
 
 def test_utils():

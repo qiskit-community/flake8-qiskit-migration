@@ -39,18 +39,8 @@ PROVIDERS_V2 = {
     "qiskit.providers.models": "{} has been removed in Qiskit 2.0; use `Target` instead",
     "qiskit.providers.BackendPropertyError": "{} has been removed in Qiskit 2.0",
     "qiskit.providers.BackendConfigurationError": "{} has been removed in Qiskit 2.0",
-    # Fake backends based on BackendV1
-    "qiskit.providers.fake_provider.FakeBackend": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
-    "qiskit.providers.fake_provider.FakePulseBackend": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` or `qiskit_ibm_runtime.fake_provider`",
-    "qiskit.providers.fake_provider.FakeQasmBackend": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` or `qiskit_ibm_runtime.fake_provider`",
-    "qiskit.providers.fake_provider.Fake1Q": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
-    "qiskit.providers.fake_provider.FakeOpenPulse2Q": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
-    "qiskit.providers.fake_provider.FakeOpenPulse3Q": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
-    "qiskit.providers.fake_provider.Fake5QV1": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
-    "qiskit.providers.fake_provider.Fake20QV1": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
-    "qiskit.providers.fake_provider.Fake7QPulseV1": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
-    "qiskit.providers.fake_provider.Fake27QPulseV1": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
-    "qiskit.providers.fake_provider.Fake127QPulseV1": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` instead",
+    # Fake backends based on BackendV1 (whole module except GenericBackendV2 and utils)
+    "qiskit.providers.fake_provider": "{} has been removed in Qiskit 2.0; use `GenericBackendV2` or `qiskit_ibm_runtime.fake_provider`",
 }
 
 PRIMITIVES_V2 = {
