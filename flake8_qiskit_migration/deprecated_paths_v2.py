@@ -63,7 +63,7 @@ TRANSPILER_V2 = {
     "qiskit.transpiler.passes.AlignMeasures": "{} has been removed in Qiskit 2.0; use `ConstrainedReschedule` instead",
     "qiskit.transpiler.passes.CXCancellation": "{} has been removed in Qiskit 2.0; use `InverseCancellation([CXGate()])` instead",
     "qiskit.transpiler.passes.StochasticSwap": "{} has been removed in Qiskit 2.0; use `SabreSwap` instead",
-    "qiskit.transpiler.passes.ConvertConditionsToIfOps": "{} has been removed in Qiskit 2.0; use `IfElseOp` directly",
+    "qiskit.transpiler.passes.ConvertConditionsToIfOps": "{} has been removed in Qiskit 2.0; `Instruction.condition` no longer exists, use `IfElseOp` instead",
     "qiskit.transpiler.passes.PulseGates": "{} has been removed in Qiskit 2.0 as part of Pulse removal",
     "qiskit.transpiler.passes.ValidatePulseGates": "{} has been removed in Qiskit 2.0 as part of Pulse removal",
     "qiskit.transpiler.passes.RXCalibrationBuilder": "{} has been removed in Qiskit 2.0 as part of Pulse removal",
@@ -75,12 +75,12 @@ TRANSPILER_V2 = {
 }
 
 RESULT_V2 = {
-    "qiskit.result.mitigation": "{} has been removed in Qiskit 2.0; use the `mthree` package instead",
+    "qiskit.result.mitigation": "{} has been removed in Qiskit 2.0; consider an error mitigation library such as `mthree`",
 }
 
 VISUALIZATION_V2 = {
     "qiskit.visualization.pulse_drawer": "{} has been removed in Qiskit 2.0 as part of Pulse removal",
-    "qiskit.visualization.visualize_transition": "{} has been removed in Qiskit 2.0",
+    # Note: visualize_transition is NOT removed in 2.0 (still in Qiskit despite deprecation warnings)
 }
 
 

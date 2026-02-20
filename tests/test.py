@@ -243,7 +243,9 @@ def test_visualization_v2():
     """
     results = _results(code)
     qkt200_results = {r for r in results if "QKT200" in r}
-    assert len(qkt200_results) == 2
+    # Only pulse_drawer is removed in 2.0; visualize_transition is NOT removed
+    assert len(qkt200_results) == 1
+    assert any("pulse_drawer" in r for r in qkt200_results)
 
 
 def test_fake_backend_v1_removal():
