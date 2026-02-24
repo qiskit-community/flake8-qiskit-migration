@@ -11,14 +11,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v6
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v6
       with:
-        python-version: '3.x'
+        python-version: '3.11'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest ./
+        python -m pip install -r requirements.txt
+        python -m pip install .
     - name: Run tests
       run: pytest tests/test.py
 
@@ -29,11 +31,11 @@ jobs:
     permissions:
       id-token: write
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
     - name: Set up Python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v6
       with:
-        python-version: '3.x'
+        python-version: '3.11'
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
